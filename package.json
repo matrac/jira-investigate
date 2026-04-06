@@ -1,0 +1,8 @@
+{
+  "name": "jira-investigate",
+  "version": "0.1.0",
+  "description": "AI-powered JIRA Code Defect investigator that reads tickets, analyzes source code, identifies root causes, and posts findings back — with a self-improving knowledge base.",
+  "license": "MIT",
+  "author": "David Matraberci",
+  "keywords": ["jira", "bug-triage", "code-investigation", "automation"]
+}

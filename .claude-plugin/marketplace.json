@@ -1,0 +1,15 @@
+{
+  "name": "matrac-jira-investigate",
+  "owner": {
+    "name": "matrac",
+    "url": "https://github.com/matrac"
+  },
+  "plugins": [
+    {
+      "name": "jira-investigate",
+      "source": "./",
+      "description": "AI-powered JIRA Code Defect investigator with self-improving knowledge base.",
+      "version": "0.1.0"
+    }
+  ]
+}

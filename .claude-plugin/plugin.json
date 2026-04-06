@@ -1,0 +1,5 @@
+{
+  "name": "jira-investigate",
+  "version": "0.1.0",
+  "description": "AI-powered JIRA Code Defect investigator with self-improving knowledge base."
+}
