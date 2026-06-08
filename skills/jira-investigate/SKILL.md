@@ -15,6 +15,10 @@ allowed-tools:
   - Bash(find *)
   - Bash(git *)
   - Bash(powershell *)
+  - mcp__obsidian__search_notes
+  - mcp__obsidian__read_note
+  - mcp__obsidian__get_frontmatter
+  - mcp__obsidian__list_directory
 ---
 
 # /jira-investigate — JIRA Code Defect Investigator
@@ -96,6 +100,22 @@ Parse and understand:
 
 Produce a clear understanding of: What is the reported problem? What are the symptoms? What component is affected?
 
+## Step 2.5: Domain Knowledge Lookup (optional)
+
+If a domain/product knowledge wiki is reachable through a wiki MCP server (e.g. the obsidian MCP), consult it for domain context before code search. The vault location is configured in the MCP server, not here.
+
+**Skip this step entirely** if no wiki MCP is configured, or if the ticket is purely technical (NPE, generic stack trace, build failure) with no domain terminology.
+
+Otherwise:
+
+1. Extract 2-4 domain/product keywords from the ticket summary/description. Cross-reference the **Keyword Hints** in `jira-knowledge/_repos.md` for the terms this project is known to use.
+2. Call `mcp__obsidian__search_notes` with those keywords. Take the top 3 results.
+3. For each hit, call `mcp__obsidian__get_frontmatter`. If the wiki records page reliability/status in frontmatter, prefer current/verified pages over stale ones.
+4. Call `mcp__obsidian__read_note` on the 1-2 most relevant pages. Extract: feature-to-module/class mappings, config keys, parameter names, and linked pages worth one extra hop.
+5. Feed what you learned into Step 3 as targeted grep terms — specific class names, package paths, and config keys beat generic keywords.
+
+**Rule**: the wiki is domain context, NOT ground truth for implementation. Code wins on conflicts. If the wiki describes behavior the code contradicts, record it in Investigation Notes — may be a real bug or a stale doc.
+
 ## Step 3: Code Investigation
 
 Use the `_repos.md` component-to-source map and keyword hints to identify which repo(s) and source directories to search.
@@ -127,6 +147,7 @@ Before producing outputs, verify your findings:
    - **HIGH**: Found exact line(s) of code, traced the execution flow, fix is specific and clear
    - **MEDIUM**: Found the likely code area and plausible root cause, but could not line-confirm every detail
    - **LOW**: Could not locate the relevant code or working from symptoms/logs only
+   - **Wiki corroboration bonus**: if a corroborating wiki page (one the wiki marks current/verified, if it tracks reliability) describes the feature area and aligns with the code you found, raise confidence one level (LOW→MEDIUM, MEDIUM→HIGH).
 
 4. **If LOW confidence**:
    - Do NOT post a JIRA comment
