@@ -125,7 +125,7 @@ Use the `_repos.md` component-to-source map and keyword hints to identify which 
 - If clone fails (permissions, etc.), note this in findings and investigate what you can from other repos
 
 **Investigation strategy**:
-0. For complex or ambiguous bugs, optionally dispatch several parallel `Explore` agents on the steps below — each with a distinct search angle — then reconcile their findings before concluding. For simple bugs, investigate directly.
+0. Spin up 5 agents specialized and do 3 iterations of the below 6 points and debate
 1. Extract key error messages, class names, method names, or identifiers from the ticket
 2. Use Grep to search across the relevant source paths
 3. Use the Explore agent for deep dives when needed — give it specific search objectives

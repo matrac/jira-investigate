@@ -1,7 +1,7 @@
 # 🔍 jira-investigate
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.2.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.1-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-7c3aed.svg)](https://claude.com/claude-code)
 [![JIRA Cloud](https://img.shields.io/badge/JIRA-Cloud-0052CC.svg)](https://www.atlassian.com/software/jira)
 
