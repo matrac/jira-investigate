@@ -32,7 +32,7 @@ Optional argument: `$ARGUMENTS` (a specific ticket key like `ABC-123`). If empty
 
 ## Step 0: Load Environment & Knowledge Base
 
-1. Read the `.env` file at `jira-knowledge/.env` and extract all JIRA variables. Use these for all API calls. If the file doesn't exist, tell the user to run `/jira-investigate-setup init` first and stop.
+1. Read the `.env` file at `jira-knowledge/.env` and extract all JIRA variables. Use these for all API calls. If the file doesn't exist, tell the user to run `/jira-investigate:setup init` first and stop.
 2. Read these knowledge base files (skip if they don't exist yet):
    - `jira-knowledge/_architecture.md`
    - `jira-knowledge/_index.md`
@@ -125,11 +125,11 @@ Use the `_repos.md` component-to-source map and keyword hints to identify which 
 - If clone fails (permissions, etc.), note this in findings and investigate what you can from other repos
 
 **Investigation strategy**:
-0. Spin up 5 agents specialized and do 3 iterations of the below 6 points and debate
+0. For complex or ambiguous bugs, optionally dispatch several parallel `Explore` agents on the steps below — each with a distinct search angle — then reconcile their findings before concluding. For simple bugs, investigate directly.
 1. Extract key error messages, class names, method names, or identifiers from the ticket
 2. Use Grep to search across the relevant source paths
 3. Use the Explore agent for deep dives when needed — give it specific search objectives
-4. Compare HTML/web implementation with Java/Swing implementation if the bug is about behavioral differences
+4. If the bug is a behavioral difference between two implementations of the same feature (e.g. a legacy client vs a rewrite, or web vs desktop), compare the two implementations side by side
 5. Cross-reference with `_common-issues.md` — does this match a known pattern?
 6. Trace the code path from the symptom to the root cause
 
@@ -166,7 +166,7 @@ Compose a concise, well-formatted ADF (Atlassian Document Format) comment with:
 - **Code snippet** if it helps clarify (use ADF `codeBlock` node)
 - **Suggested fix** in 1-2 sentences
 - **Key files** involved (as a short list)
-Sign it as "mAItraBOTi"
+Sign it with the `JIRA_COMMENT_SIGNATURE` value from `.env` (default: "AI Investigator" if unset).
 
 Post with the configured visibility:
 

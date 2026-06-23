@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0] - 2026-06-23
+
+### Changed
+- Renamed the setup skill to `setup` — invoke as `/jira-investigate:setup` (the previously documented `/jira-investigate-setup` did not resolve)
+- Comment signature is now configurable via `JIRA_COMMENT_SIGNATURE` in `.env` (default: "AI Investigator"); previously hardcoded
+- Generalized investigation guidance — removed the project-specific Java/Swing comparison and the fixed "5 agents" default in favor of complexity-scaled parallel investigation
+
 ## [0.1.0] - 2026-04-06
 
 ### Added

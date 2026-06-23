@@ -1,5 +1,5 @@
 ---
-name: jira-investigate-setup
+name: setup
 description: First-time setup for jira-investigate — creates the knowledge base folder, configures JIRA credentials, and maps source code repositories. Run this before your first investigation or when setting up a new project.
 user-invocable: true
 allowed-tools:
@@ -14,7 +14,7 @@ allowed-tools:
   - Bash(rm *)
 ---
 
-# /jira-investigate-setup — Project Setup
+# /jira-investigate:setup — Project Setup
 
 Initializes the knowledge base and JIRA configuration for the current project. All state is stored in `jira-knowledge/` relative to the current working directory.
 
@@ -66,6 +66,7 @@ Run the full initialization:
    JIRA_COMMENT_VISIBILITY_ID=your-group-id
    JIRA_COMMENT_VISIBILITY_NAME=Internal
    JIRA_MY_EMAIL=you@company.com
+   JIRA_COMMENT_SIGNATURE=AI Investigator
    ```
 
    Help the user find their visibility group ID if they don't know it:

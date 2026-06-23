@@ -1,7 +1,7 @@
 # 🔍 jira-investigate
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.0-green.svg)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-7c3aed.svg)](https://claude.com/claude-code)
 [![JIRA Cloud](https://img.shields.io/badge/JIRA-Cloud-0052CC.svg)](https://www.atlassian.com/software/jira)
 
@@ -33,7 +33,7 @@ Then restart Claude CLI for the skills to load.
 Run the setup skill first:
 
 ```
-/jira-investigate-setup init
+/jira-investigate:setup init
 ```
 
 This will:
@@ -46,9 +46,9 @@ This will:
 
 ```
 /jira-investigate              # auto-pick latest unhandled ticket
-/jira-investigate ABC-1234      # investigate a specific ticket
-/jira-investigate-setup                    # check status
-/jira-investigate-setup init               # first-time setup
+/jira-investigate ABC-1234     # investigate a specific ticket
+/jira-investigate:setup        # check status
+/jira-investigate:setup init   # first-time setup
 ```
 
 ## Knowledge base
@@ -100,6 +100,8 @@ The JIRA query in the investigation skill is preconfigured to search for:
 These may not match your project. Review and edit `skills/jira-investigate/SKILL.md` -- look for the JQL query in Step 1 and adjust the `issuetype` and `status` values to match your JIRA workflow.
 
 Similarly, the comment visibility is set to post to an `Internal` group. If your project uses a different group or no restricted visibility, update the visibility settings in `jira-knowledge/.env` after setup.
+
+Posted comments are signed with `JIRA_COMMENT_SIGNATURE` from `jira-knowledge/.env` (default: `AI Investigator`). Change it to whatever name you want the bot to sign as.
 
 ## Requirements
 
