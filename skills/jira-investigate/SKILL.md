@@ -25,7 +25,14 @@ allowed-tools:
 
 You are investigating the latest JIRA Code Defect ticket. Follow these steps precisely.
 
-IMPORTANT: Do not use python (any version). Use powershell for JSON parsing where needed.
+IMPORTANT: This skill runs UNATTENDED (scheduled, nobody watching). It must complete end-to-end every run. Never stop to ask a question. Never call a tool that is not on the allowed-tools list above.
+
+IMPORTANT: Shell rules
+- Use the **Bash tool only**. NEVER call the PowerShell tool — it is not allowed for this skill and will stall the run.
+- When JSON parsing is needed, call `powershell.exe` as a subprocess from Bash: `powershell -Command "..."`.
+- Paths handed to `powershell.exe` must be Windows-style (`C:\...` or `G:\...`), never Git-Bash `/c/...` style — powershell.exe cannot resolve those.
+- Prefer `curl -o <file>` then `powershell -Command "Get-Content -Raw '<win path>' | ConvertFrom-Json"` over piping `$input`; it avoids quoting problems.
+- Do not use python (any version).
 
 ## Input
 Optional argument: `$ARGUMENTS` (a specific ticket key like `ABC-123`). If empty, auto-detect the latest unhandled ticket.
@@ -33,12 +40,13 @@ Optional argument: `$ARGUMENTS` (a specific ticket key like `ABC-123`). If empty
 ## Step 0: Load Environment & Knowledge Base
 
 1. Read the `.env` file at `jira-knowledge/.env` and extract all JIRA variables. Use these for all API calls. If the file doesn't exist, tell the user to run `/jira-investigate:setup init` first and stop.
-2. Read these knowledge base files (skip if they don't exist yet):
+2. Read these knowledge base files fully (skip if they don't exist yet):
    - `jira-knowledge/_architecture.md`
-   - `jira-knowledge/_index.md`
    - `jira-knowledge/_repos.md`
-   - `jira-knowledge/_common-issues.md`
-3. These give you accumulated context about the codebase, component locations, and recurring bug patterns. Use them to guide your investigation.
+3. Do NOT read `_index.md` or `_common-issues.md` fully — they grow without bound and blow the context. Instead:
+   - `_common-issues.md`: Grep for `^### ` to get the pattern-title list only. Read a full pattern block (its 4 lines) only when its title matches the ticket in Step 1.5 / Step 3.
+   - `_index.md`: Grep by component/keyword from the target ticket's summary in Step 1.5. Never read the whole table.
+4. These give you accumulated context about the codebase, component locations, and recurring bug patterns. Use them to guide your investigation.
 
 ## Step 1: Identify the Target Ticket
 
@@ -66,9 +74,9 @@ Optional argument: `$ARGUMENTS` (a specific ticket key like `ABC-123`). If empty
 
 ## Step 1.5: Check for Related Prior Tickets
 
-1. Read `jira-knowledge/_index.md` (already loaded in Step 0)
-2. Extract component names and key terms from the target ticket's summary
-3. Search the index for tickets matching the same component or pattern keywords
+1. Extract component names and key terms from the target ticket's summary
+2. Grep `jira-knowledge/_index.md` for those terms (case-insensitive) — do not read the whole file
+3. Also grep the `^### ` titles of `_common-issues.md` for the same terms and read only the matching pattern blocks
 4. For each match (max 3), read the first 20 lines of the ticket .md file (Summary + Root Cause header only)
 5. Note related ticket keys — include these in your output and use them to inform your investigation
 
@@ -125,7 +133,7 @@ Use the `_repos.md` component-to-source map and keyword hints to identify which 
 - If clone fails (permissions, etc.), note this in findings and investigate what you can from other repos
 
 **Investigation strategy**:
-0. Spin up 5 agents specialized and do 3 iterations of the below 6 points and debate
+0. Spin up 5 agents specialized and do 3 iterations of the below 6 points and debate. Every agent prompt MUST state: "Read-only investigation. Use only Read, Grep, Glob, Bash. Never use the PowerShell tool, never ask questions, never edit files." Sub-agents run under the same permission config — one sub-agent grabbing a non-allowed tool stalls the whole unattended run.
 1. Extract key error messages, class names, method names, or identifiers from the ticket
 2. Use Grep to search across the relevant source paths
 3. Use the Explore agent for deep dives when needed — give it specific search objectives
