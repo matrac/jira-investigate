@@ -132,8 +132,39 @@ Use the `_repos.md` component-to-source map and keyword hints to identify which 
 - Try to clone it: `git clone {remote_url} {local_path}`
 - If clone fails (permissions, etc.), note this in findings and investigate what you can from other repos
 
-**Investigation strategy**:
-0. Spin up 5 agents specialized and do 3 iterations of the below 6 points and debate. Every agent prompt MUST state: "Read-only investigation. Use only Read, Grep, Glob, Bash. Never use the PowerShell tool, never ask questions, never edit files." Sub-agents run under the same permission config — one sub-agent grabbing a non-allowed tool stalls the whole unattended run.
+**Investigation strategy — multi-agent, mandatory on every ticket (never skip it, even when the cause looks obvious):**
+
+Every agent prompt MUST state: "Read-only investigation. Use only Read, Grep, Glob, Bash. Never use the PowerShell tool, never ask questions, never edit files." Sub-agents run under the same permission config — one sub-agent grabbing a non-allowed tool stalls the whole unattended run.
+
+Give every agent the same briefing: ticket key and summary, the symptoms, exact error strings and log excerpts you extracted in Step 2, the repo paths from `_repos.md`, and any related tickets / KB patterns / wiki facts from Steps 1.5 and 2.5.
+
+**Round 1 — five independent investigations.** Launch all five agents in ONE message (parallel Agent calls), one per role:
+
+| # | Role | Job |
+|---|------|-----|
+| 1 | Evidence analyst | Take every concrete signal from the ticket, comments and logs — exception type, stack frames, error/log message text, IDs, config values — and find where each one originates in the code. |
+| 2 | Code-path tracer | Start at the entry point the user touched (servlet, controller, handler, UI component, FIX message handler) and trace the path to where the wrong value or state is produced. |
+| 3 | Change historian | Run `git log`, `git log -S "<identifier>"` and `git blame` on the suspect area; find recent changes that could have introduced the behaviour. Use any version hints in the ticket ("worked in 3.7"). |
+| 4 | Sibling comparer | Find other implementations of the same feature (legacy vs new client, Java vs HTML AdminTool, web vs desktop, spot vs forward vs swap, one LP provider vs another) and compare them; bugs often sit where one copy diverges. |
+| 5 | Skeptic | Write down three different root-cause hypotheses — not the most obvious one only — and look for code evidence for and against each. |
+
+Each agent must end its answer with exactly these fields:
+- HYPOTHESIS: one sentence
+- LOCATION: `path/File.ext:line`
+- EVIDENCE: the quoted code lines, and why they produce the reported symptom
+- FIX: the specific code change
+- CONFIDENCE: high / medium / low
+- WOULD DISPROVE: what observation would show this hypothesis is wrong
+
+**Merge (you, not an agent).** Put the five answers side by side and group the ones that name the same mechanism. A hypothesis leads only if it (a) points at a specific line, (b) explains every symptom in the ticket, and (c) survives the Skeptic's objections.
+
+**Round 2 — debate.** If the agents disagree, or the leading hypothesis fails (a), (b) or (c), launch up to three agents in ONE message, each aimed at a specific disagreement, e.g. "Agent 2 says X at `A.java:120`, Agent 4 says Y at `B.java:88`. Read both paths and determine which one actually executes for this ticket's inputs, and whether it produces the reported symptom." Pass them the round-1 answers. Skip round 2 only when all five named the same mechanism and location.
+
+**Round 3 — verification.** If round 2 still left it open, one final agent checks the leading hypothesis line by line against the code and the ticket, and either confirms it or says exactly which part does not hold.
+
+Carry the settled root cause into Step 3.5. In the ticket file's Investigation Notes, record the hypotheses considered, which role found the winning one, and why the alternatives were rejected.
+
+Techniques every agent (and you) should use:
 1. Extract key error messages, class names, method names, or identifiers from the ticket
 2. Use Grep to search across the relevant source paths
 3. Use the Explore agent for deep dives when needed — give it specific search objectives
