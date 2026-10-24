@@ -44,7 +44,7 @@ Optional argument: `$ARGUMENTS` (a specific ticket key like `ABC-123`). If empty
    - `jira-knowledge/_architecture.md`
    - `jira-knowledge/_repos.md`
 3. Do NOT read `_index.md` or `_common-issues.md` fully — they grow without bound and blow the context. Instead:
-   - `_common-issues.md`: Grep for `^### ` to get the pattern-title list only. Read a full pattern block (its 4 lines) only when its title matches the ticket in Step 1.5 / Step 3.
+   - `_common-issues.md`: first read only its index (from the top down to the `INDEX:END` line) to see the categories. Then Grep for `^### ` to get the pattern-title list only. Read a full pattern block (its 4 lines) only when its title matches the ticket in Step 1.5 / Step 3.
    - `_index.md`: Grep by component/keyword from the target ticket's summary in Step 1.5. Never read the whole table.
 4. These give you accumulated context about the codebase, component locations, and recurring bug patterns. Use them to guide your investigation.
 
@@ -305,7 +305,8 @@ Update ONLY if you discovered something genuinely new and reusable:
   (a) This bug matches an existing pattern -> add the ticket key to that pattern's "Seen in" list, OR
   (b) This bug represents a genuinely NEW recurring pattern -> add a new 4-line entry (Pattern + Symptom + Fix + Seen in)
   Do NOT add one-off bugs that are specific to a single method/class.
-  **Pruning**: If `_common-issues.md` exceeds 25 patterns, remove the oldest pattern that has been "Seen in" only 1 ticket AND was investigated more than 60 days ago. The ticket file serves as cold storage.
+  **Never remove, trim or move patterns.** The file keeps every pattern. After any change, refresh its index with the Bash tool:
+  `python -I "<this skill's base directory>/scripts/md_index.py" jira-knowledge/_common-issues.md --hint "do not read this file whole: grep '^### ' titles or a keyword, then Read only the matching pattern"`
 
 - **`_repos.md`**: Add new component rows to the table if a previously unknown component was investigated. Add keyword hints ONLY for functional-area terms (not specific class/method names — those go in the table Notes column). Check for duplicates against the table Notes column before adding.
 
