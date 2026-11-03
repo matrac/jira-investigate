@@ -15,6 +15,7 @@ allowed-tools:
   - Bash(find *)
   - Bash(git *)
   - Bash(powershell *)
+  - Bash(python *)
   - mcp__obsidian__search_notes
   - mcp__obsidian__read_note
   - mcp__obsidian__get_frontmatter
@@ -32,7 +33,7 @@ IMPORTANT: Shell rules
 - When JSON parsing is needed, call `powershell.exe` as a subprocess from Bash: `powershell -Command "..."`.
 - Paths handed to `powershell.exe` must be Windows-style (`C:\...` or `G:\...`), never Git-Bash `/c/...` style — powershell.exe cannot resolve those.
 - Prefer `curl -o <file>` then `powershell -Command "Get-Content -Raw '<win path>' | ConvertFrom-Json"` over piping `$input`; it avoids quoting problems.
-- Do not use python (any version).
+- Do not use python (any version), except the md_index.py index refresh in Step 4c.
 
 ## Input
 Optional argument: `$ARGUMENTS` (a specific ticket key like `ABC-123`). If empty, auto-detect the latest unhandled ticket.

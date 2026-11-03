@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] - 2026-11-03
+
+### Changed
+- `_common-issues.md` keeps every pattern and gets a generated index (`scripts/md_index.py`), refreshed after each change.
+
+### Fixed
+- The skill banned python but Step 4c runs `md_index.py` with it, and `Bash(python *)` was not in allowed-tools — unattended runs either skipped the index refresh or stalled on a permission prompt. python is now allowed for that script only.
+
 ## [0.3.0] - 2026-10-01
 
 ### Changed
